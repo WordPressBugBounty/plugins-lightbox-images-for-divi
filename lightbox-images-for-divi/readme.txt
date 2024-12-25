@@ -3,7 +3,7 @@ Contributors: fernandot
 Donate link: https://www.paypal.me/fernandotellado
 Tags: divi, builder, composer, lightbox, modal, popup
 Requires at least: 4.0
-Tested up to: 6.5.2
+Tested up to: 6.7.1
 Stable tag: trunk
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -56,9 +56,13 @@ You must add some exclusions in the 'Delay JavaScript Execution' section. These 
 1. Divi Lightbox active in an individual image.
 
 == Changelog ==
-= 1.0.5 =
-* Tested with Divi 4.24.2s
-* Tested with WordPress 6.5.2     
+= 1.0.7 =
+* Tested with Divi 4.27.4
+* Tested with WordPress 6.7.1 
+
+= 1.0.6 =
+* Tested with Divi 4.27.1
+* Tested with WordPress 6.6.2     
 
 = 1.0.5 =
 * Tested with Divi 4.23
