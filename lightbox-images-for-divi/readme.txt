@@ -1,145 +1,78 @@
-=== Divi Lightbox for Images ===
-Contributors: fernandot
-Donate link: https://www.paypal.me/fernandotellado
-Tags: divi, builder, composer, lightbox, modal, popup
-Requires at least: 4.0
-Tested up to: 6.7.1
-Stable tag: trunk
-License: GPLv2+
+=== Lightbox Images for Divi Enhanced ===
+Contributors: fernandot, ayudawp
+Donate Link: https://servicios.ayudawp.com
+Tags: divi, lightbox, auto-linked, gallery, image
+Requires at least: 5.0
+Tested up to: 6.8
+Requires PHP: 7.4
+Stable tag: 2.0
+License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Divi Lightbox for self linked individual images
-
+Extends Divi's native lightbox effect to all auto-linked images, not just galleries. Compatible with Divi 4.10+ and ready for Divi 5
 
 == Description ==
 
-If Divi Gallery setting is active in Divi Options menu, Divi Theme & Builder use a native Lightbox script to open a modal window when a user click on an image from a gallery. But this script isn't available for individual self linked images.
+The main purpose of the ‘Lightbox Images for Divi’ plugin is to extend Divi's native lightbox functionality to all auto-linked images, not just galleries
 
-This plugin use Divi's Native Lightbox also for individual self linked images. The only requisite is to have Divi Theme (or builder) installed and active and, of course, Divi Gallery option active in Divi Options menu.
+**Main features:**
 
-The purpose of this plugin is to avoid installation of another plugin to achieve the Lightbox effect also for individual images. The goal is to obtain a better performance, reducing the need of installing more plugins instead of use of already installed, and misused, scripts. 
+*   **Extended Compatibility:** Works with the Divi or Divi Builder theme, and has been designed with compatibility in mind for Divi 4.10 and future versions, including Divi 5.
+*   **Native Integration:** Use the lightbox functionality already present in Divi, ensuring seamless integration with your site's design and performance.
+*   **Easy to Use:** Simply install and activate the plugin. No additional configuration is required.
+*   **Optimized Performance:** The code has been refactored to follow WordPress best practices, efficiently concatenating scripts and minimizing the impact on page load.
+*   **Ready for the Future:** Incorporates robust CSS/jQuery selectors and a script concatenation system that anticipates changes in the Divi 5 structure, such as the new Flexbox system.
+*   **Extensible:** Includes a filter (`ayudawp_lightbox_selectors`) that allows developers to customize CSS selectors to include or exclude specific elements.
 
-The plugin Divi Lightbox for self linked Individual Images loads the Lightbox script in footer for better optimization and performance.
+This plugin enhances the user experience on websites built with Divi, ensuring that any image linked to itself (i.e., clicking on it opens the image in its full size) is displayed in Divi's elegant native lightbox effect.
 
-This plugin only works with Divi Theme or Divi Builder plugin installed & active:
+Unlike Divi's default functionality, which often restricts this effect to galleries, this plugin extends it to all individual images, providing a consistent and engaging visual experience.  
 
-- [Divi by Elegant Themes](https://www.elegantthemes.com/affiliates/idevaffiliate.php?id=3181&url=42890) (yes, this is an affiliate link!)
-
-<strong>No options</strong>, just activate the plugin and it’s done.
+The plugin is ideal for photographers, bloggers, and any Divi user who wants to offer a more polished and professional image viewing experience without the need for complex configurations or additional gallery plugins.
 
 == Installation ==
 
-1. Go to your WP Dashboard > Plugins and search for ‘lightbox divi’ or…
-2. Download the plugin from WP repository.
-3. Upload the plugin folder to the '/wp-content/plugins/' directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. Upload the `lightbox-images-for-divi-enhanced` folder to `/wp-content/plugins/` directory.
+2. Activate the plugin via the ‘Plugins’ menu in WordPress.
+3. Make sure that the Divi or Divi Builder theme is active and is version 4.10 or higher.
+4. That's it! All your auto-linked images will now open in a Divi lightbox.
 
 == Frequently Asked Questions ==
 
-= Does this plugin works with Divi Builder plugin? =
+= Do I need Divi for this plugin to work? =
+Yes, this plugin is specifically designed to work with the Divi or Divi Builder theme. It will not work with other WordPress themes.
 
-Yes, this plugin works with Divi Theme and with Divi standalone builder plugin too.
+= Is it compatible with Divi 5? =
+The plugin has been developed with compatibility with Divi 5 and its structural changes in mind. Robust selectors have been implemented and script loading has been optimized to ensure its functionality in future versions of Divi.
 
-= Does this plugin affect to my site performance? =
+= How can I customize the image selectors? =
+For advanced users and developers, the plugin provides a `ayudawp_lightbox_selectors` filter. You can use this filter in your child theme's `functions.php` file to add or modify the CSS selectors that the plugin uses to identify images. For example:
 
-No. The purpose is just the opposite. With this plugin You will not need any other plugin to get Lightbox effect for your self linked individual images. This plugin make use of the existing script in Divi core builder.
-
-= The plugin doesn't works with WP Rocket plugin enabled =
-
-You must add some exclusions in the 'Delay JavaScript Execution' section. These ones:
-<code>dbc_links_in_lightbox
-/feature/dynamic-assets/assets/css/magnific_popup.css
-/feature/dynamic-assets/assets/js/magnific-popup.js</code>
-
-== Screenshots ==
-
-1. Divi Lightbox active in an individual image.
+`php
+add_filter( 'ayudawp_lightbox_selectors', 'my_custom_lightbox_selectors' );
+function my_custom_lightbox_selectors( $selectors ) {
+    $selectors[] = '.my-custom-module a'; // Añade un selector para un módulo personalizado
+    return $selectors;
+}
+`
 
 == Changelog ==
-= 1.0.7 =
-* Tested with Divi 4.27.4
-* Tested with WordPress 6.7.1 
 
-= 1.0.6 =
-* Tested with Divi 4.27.1
-* Tested with WordPress 6.6.2     
+= 2.0 - 2025-08-04 =
+* Complete refactoring of the code to a class structure (Singleton).
+* Migration of the JavaScript script to an external file (`assets/js/lightbox-images-for-divi.js`).
+* Use of `wp_enqueue_script` for more efficient script loading and following WordPress best practices.
+* Optimization of CSS/jQuery selectors for greater robustness and compatibility with future versions of Divi (including Divi 5).
+* Implementation of a filter (`ayudawp_lightbox_selectors`) to allow customization of selectors.
+* Improved verification of compatibility with Divi and its version.
+* Added uninstall hook for cleaning options.
+* Updated plugin information (version, author, etc.).
+* Improved internal documentation and the `readme.txt` file.
 
-= 1.0.5 =
-* Tested with Divi 4.23
-* Tested with WordPress 6.4
+= 1.0.7 - 2024-07-18 =
+* Initial version.
 
-= 1.0.4 =
-* Tested with Divi 4.20.2
-* Tested with WordPress 6.2
+== Upgrade Notice ==
 
-= 1.0.3 =
-* Tested with Divi 4.18.0
-* Tested with WordPress 6.1
-
-= 1.0.1 =
-* Tested with Divi 4.18.0
-* Tested with WordPress 6.0.2
-
-= 1.0.1 =
-* Tested with Divi 4.17.4
-* Tested with WordPress 6.0
-
-= 1.0 =
-* Plugin refactored in order to work with Divi latest versions
-* Tested with Divi 4.14.8
-* Tested with WordPress 5.9.1
-
-= 0.9.17 =
-* Tested with Divi 4.14.7
-* Teste with WordPress 5.9
-= 0.9.16 =
-* Tested with Divi 4.9.9
-* Teste with WordPress 5.8
-= 0.9.15 =
-* Tested with Divi 4.7.4
-* Teste with WordPress 5.6
-= 0.9.14 =
-* Tested with Divi 4.6.1
-* Teste with WordPress 5.5.1
-= 0.9.13 =
-* Tested with Divi 4.6
-* Changed readme link according the plugin directory guidelines
-= 0.9.12 =
-* Tested up to WordPress 5.5
-= 0.9.11 =
-* Tested up to WordPress 5.4.1
-* Widgets support removed due to several issues
-
-= 0.9.10 =
-* Tested up to WordPress 5.4
-* Now it works with widgets too (Thanks to @akg-free)
-
-= 0.9.9 =
-* Tested up to WordPress 5.3.2
-
-= 0.9.8 =
-* Solved issue with Divi galleries
-
-= 0.9.7 =
-* Tested up and working with WordPress 5.3
-
-= 0.9.6 =
-* Tested up to WordPress 5.2.2
-
-= 0.9.5 =
-* Tested up to WordPress 5.2
-
-= 0.9.4 =
-* Tested up to WordPress 5.1
-
-= 0.9.3 =
-* Tested up to WordPress 5.0 tag added
-
-= 0.9.2 =
-* Tested up to WordPress 4.9.6 and Divi latest updates
-
-= 0.9.1 =
-* Tested up to WordPress 4.9.5 and Divi latest updates
-
-= 0.9 =
-* Initial release
+= 2.0 =
+This is a major update with code refactoring. We recommend testing in a staging environment before updating in production. Make sure your version of Divi is 4.10 or higher.
