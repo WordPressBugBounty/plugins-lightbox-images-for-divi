@@ -3,46 +3,50 @@
 Plugin Name: Lightbox Images for Divi Enhanced
 Plugin URI: https://servicios.ayudawp.com
 Description: Apply Divi's native lightbox effect to all auto-linked images, not just galleries. Compatible with Divi 4.10+ and ready for Divi 5. This plugin only works with the Divi theme or Divi Builder installed and active.
-Version: 2.0
+Version: 2.1
 Author: Fernando Tellado
 Author URI: https://ayudawp.com
 License: GPLv2
 Text Domain: lightbox-images-for-divi
-Domain Path: /languages/
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
 */
 
-// Impedir acceso directo al plugin
+// Prevent direct access to the plugin
 defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 
 /**
- * Clase principal del plugin
+ * Main plugin class
  * 
  * @since 2.0
  */
 class AyudaWP_Lightbox_Images_For_Divi {
     
     /**
-     * Versión del plugin
+     * Plugin version
      */
-    const VERSION = '2.0';
+    const VERSION = '2.1';
     
     /**
-     * Instancia única del plugin (Singleton)
+     * Minimum required Divi version
+     */
+    const MIN_DIVI_VERSION = '4.10';
+    
+    /**
+     * Unique plugin instance (Singleton)
      */
     private static $instance = null;
     
     /**
-     * Constructor privado para implementar Singleton
+     * Private constructor to implement Singleton
      */
     private function __construct() {
         $this->init();
     }
     
     /**
-     * Obtener la instancia única del plugin
+     * Get the unique plugin instance
      * 
      * @return AyudaWP_Lightbox_Images_For_Divi
      */
@@ -54,77 +58,125 @@ class AyudaWP_Lightbox_Images_For_Divi {
     }
     
     /**
-     * Inicializar el plugin
+     * Initialize the plugin
      * 
      * @since 2.0
      */
     private function init() {
-        // Cargar traducciones
-        add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+        // Check compatibility on plugin activation
+        register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
         
-        // Encolar scripts y estilos
+        // Check if dependencies are still active on every admin page load
+        add_action( 'admin_init', array( $this, 'check_dependencies' ) );
+        
+        // Show activation error notices
+        add_action( 'admin_notices', array( $this, 'show_activation_notices' ) );
+        
+        // Enqueue scripts and styles only if dependencies are met
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
         
-        // Hook para verificar compatibilidad con Divi
-        add_action( 'admin_notices', array( $this, 'check_divi_compatibility' ) );
-        
-        // Añadir filtro para personalizar selectores (para desarrolladores)
+        // Add filter to customize selectors (for developers)
         add_filter( 'ayudawp_lightbox_selectors', array( $this, 'default_selectors' ) );
+        
+        // Add action links to plugin page
+        add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'add_action_links' ) );
     }
     
     /**
-     * Cargar archivos de traducción
+     * Plugin activation hook
+     * Checks if Divi is available before allowing activation
      * 
-     * @since 2.0
+     * @since 2.1
      */
-    public function load_textdomain() {
-        load_plugin_textdomain( 
-            'lightbox-images-for-divi', 
-            false, 
-            dirname( plugin_basename( __FILE__ ) ) . '/languages' 
-        );
-    }
-    
-    /**
-     * Verificar compatibilidad con Divi
-     * 
-     * @since 2.0
-     */
-    public function check_divi_compatibility() {
-        // Verificar si Divi está activo
-        if ( ! $this->is_divi_active() ) {
-            echo '<div class="notice notice-warning is-dismissible">';
-            echo '<p>' . esc_html__( 'Lightbox Images for Divi Enhanced requires the Divi theme or Divi Builder plugin to be installed and active.', 'lightbox-images-for-divi' ) . '</p>';
-            echo '</div>';
+    public function activate_plugin() {
+        if ( ! $this->is_divi_available() ) {
+            // Deactivate the plugin
+            deactivate_plugins( plugin_basename( __FILE__ ) );
+            
+            // Set a transient to show admin notice
+            set_transient( 'ayudawp_lightbox_activation_error', 'missing_divi', 30 );
             return;
         }
         
-        // Verificar versión de Divi
-        if ( defined( 'ET_CORE_VERSION' ) && version_compare( ET_CORE_VERSION, '4.10', '<' ) ) {
-            echo '<div class="notice notice-warning is-dismissible">';
-            echo '<p>' . sprintf( 
-                /* translators: %s stands for currently installed Divi version */
-                esc_html__( 'Lightbox Images for Divi Enhanced requires at least Divi v4.10. Current version: %s', 'lightbox-images-for-divi' ), 
-                esc_html( ET_CORE_VERSION ) 
+        // Check Divi version if available
+        if ( $this->is_divi_available() && ! $this->is_divi_version_compatible() ) {
+            deactivate_plugins( plugin_basename( __FILE__ ) );
+            
+            set_transient( 'ayudawp_lightbox_activation_error', 'incompatible_version', 30 );
+            return;
+        }
+    }
+    
+    /**
+     * Check if dependencies are still active
+     * Deactivates plugin if Divi is no longer available
+     * 
+     * @since 2.1
+     */
+    public function check_dependencies() {
+        if ( ! $this->is_divi_available() ) {
+            deactivate_plugins( plugin_basename( __FILE__ ) );
+            
+            add_action( 'admin_notices', function() {
+                echo '<div class="notice notice-error is-dismissible">';
+                echo '<p><strong>' . esc_html__( 'Lightbox Images for Divi Enhanced has been deactivated', 'lightbox-images-for-divi' ) . '</strong></p>';
+                echo '<p>' . esc_html__( 'This plugin requires either Divi theme or Divi Builder plugin to be active.', 'lightbox-images-for-divi' ) . '</p>';
+                echo '</div>';
+            });
+        }
+    }
+    
+    /**
+     * Show activation error notices
+     * 
+     * @since 2.1
+     */
+    public function show_activation_notices() {
+        $error = get_transient( 'ayudawp_lightbox_activation_error' );
+        
+        if ( ! $error ) {
+            return;
+        }
+        
+        delete_transient( 'ayudawp_lightbox_activation_error' );
+        
+        if ( 'missing_divi' === $error ) {
+            echo '<div class="notice notice-error is-dismissible">';
+            echo '<p><strong>' . esc_html__( 'Lightbox Images for Divi Enhanced could not be activated', 'lightbox-images-for-divi' ) . '</strong></p>';
+            echo '<p>' . esc_html__( 'This plugin requires either Divi Theme (active) OR Divi Builder Plugin (installed and active).', 'lightbox-images-for-divi' ) . '</p>';
+            echo '</div>';
+        } elseif ( 'incompatible_version' === $error ) {
+            echo '<div class="notice notice-error is-dismissible">';
+            echo '<p><strong>' . esc_html__( 'Lightbox Images for Divi Enhanced could not be activated', 'lightbox-images-for-divi' ) . '</strong></p>';
+            echo '<p>' . sprintf(
+                /* translators: %1$s: Required Divi version, %2$s: Current Divi version */
+                esc_html__( 'This plugin requires Divi version %1$s or higher. Current version: %2$s', 'lightbox-images-for-divi' ),
+                esc_html( self::MIN_DIVI_VERSION ),
+                esc_html( $this->get_divi_version() )
             ) . '</p>';
             echo '</div>';
         }
     }
     
     /**
-     * Verificar si Divi está activo
+     * Check if Divi is available (theme or plugin)
      * 
      * @return bool
-     * @since 2.0
+     * @since 2.1
      */
-    private function is_divi_active() {
-        // Verificar si es el tema Divi
+    private function is_divi_available() {
+        // Check if Divi theme is active
         $theme = wp_get_theme();
         if ( 'Divi' === $theme->get( 'Name' ) || 'Divi' === $theme->get_template() ) {
             return true;
         }
         
-        // Verificar si Divi Builder está activo como plugin
+        // Check if Divi Builder plugin is active
+        if ( is_plugin_active( 'divi-builder/divi-builder.php' ) ) {
+            return true;
+        }
+        
+        // Check if ET_BUILDER_VERSION is defined (alternative check)
         if ( defined( 'ET_BUILDER_VERSION' ) ) {
             return true;
         }
@@ -133,17 +185,59 @@ class AyudaWP_Lightbox_Images_For_Divi {
     }
     
     /**
-     * Encolar scripts y estilos necesarios
+     * Check if Divi version is compatible
+     * 
+     * @return bool
+     * @since 2.1
+     */
+    private function is_divi_version_compatible() {
+        $divi_version = $this->get_divi_version();
+        
+        if ( empty( $divi_version ) ) {
+            return false;
+        }
+        
+        return version_compare( $divi_version, self::MIN_DIVI_VERSION, '>=' );
+    }
+    
+    /**
+     * Get current Divi version
+     * 
+     * @return string
+     * @since 2.1
+     */
+    private function get_divi_version() {
+        // Try ET_CORE_VERSION first (most reliable)
+        if ( defined( 'ET_CORE_VERSION' ) ) {
+            return ET_CORE_VERSION;
+        }
+        
+        // Fallback to ET_BUILDER_VERSION
+        if ( defined( 'ET_BUILDER_VERSION' ) ) {
+            return ET_BUILDER_VERSION;
+        }
+        
+        // Try to get version from theme if it's Divi theme
+        $theme = wp_get_theme();
+        if ( 'Divi' === $theme->get( 'Name' ) || 'Divi' === $theme->get_template() ) {
+            return $theme->get( 'Version' );
+        }
+        
+        return '';
+    }
+    
+    /**
+     * Enqueue necessary scripts and styles
      * 
      * @since 2.0
      */
     public function enqueue_scripts() {
-        // Solo cargar si Divi está activo y es la versión correcta
-        if ( ! $this->is_divi_active() || ! defined( 'ET_CORE_VERSION' ) || version_compare( ET_CORE_VERSION, '4.10', '<' ) ) {
+        // Only load if Divi is available and version is compatible
+        if ( ! $this->is_divi_available() || ! $this->is_divi_version_compatible() ) {
             return;
         }
         
-        // Encolar el script principal del plugin
+        // Enqueue main plugin script
         wp_enqueue_script(
             'ayudawp-lightbox-images-for-divi',
             plugin_dir_url( __FILE__ ) . 'assets/js/lightbox-images-for-divi.js',
@@ -152,7 +246,7 @@ class AyudaWP_Lightbox_Images_For_Divi {
             true
         );
         
-            // Pasar datos al script JavaScript
+        // Pass data to JavaScript
         $selectors = apply_filters( 'ayudawp_lightbox_selectors', $this->default_selectors() );
         wp_localize_script(
             'ayudawp-lightbox-images-for-divi',
@@ -164,12 +258,12 @@ class AyudaWP_Lightbox_Images_For_Divi {
             )
         );
         
-        // Encolar Magnific Popup solo si es necesario
+        // Conditionally enqueue Magnific Popup
         $this->maybe_enqueue_magnific_popup();
     }
     
     /**
-     * Selectores CSS por defecto para buscar enlaces de imagen
+     * Default CSS selectors for image links
      * 
      * @return array
      * @since 2.0
@@ -185,12 +279,12 @@ class AyudaWP_Lightbox_Images_For_Divi {
     }
     
     /**
-     * Encolar Magnific Popup condicionalmente
+     * Conditionally enqueue Magnific Popup
      * 
      * @since 2.0
      */
     private function maybe_enqueue_magnific_popup() {
-        // Verificar si Magnific Popup ya está encolado por Divi
+        // Check if Magnific Popup is already enqueued by Divi
         global $wp_scripts;
         $magnific_enqueued = false;
         
@@ -203,43 +297,63 @@ class AyudaWP_Lightbox_Images_For_Divi {
             }
         }
         
-        // Si no está encolado y tenemos acceso a los assets de Divi, encolarlos
+        // If not enqueued and we have access to Divi assets, enqueue them
         if ( ! $magnific_enqueued && defined( 'ET_BUILDER_URI' ) ) {
             wp_enqueue_style(
                 'ayudawp-magnific-popup',
                 ET_BUILDER_URI . '/feature/dynamic-assets/assets/css/magnific_popup.css',
                 array(),
-                ET_CORE_VERSION
+                $this->get_divi_version()
             );
             
             wp_enqueue_script(
                 'ayudawp-magnific-popup',
                 ET_BUILDER_URI . '/feature/dynamic-assets/assets/js/magnific-popup.js',
                 array( 'jquery' ),
-                ET_CORE_VERSION,
+                $this->get_divi_version(),
                 true
             );
         }
     }
     
     /**
-     * Método para desinstalar el plugin
+     * Add action links to plugin page
+     * 
+     * @param array $links
+     * @return array
+     * @since 2.1
+     */
+    public function add_action_links( $links ) {
+        $plugin_links = array(
+            '<a href="https://servicios.ayudawp.com" target="_blank">' . esc_html__( 'Support', 'lightbox-images-for-divi' ) . '</a>',
+        );
+        
+        return array_merge( $plugin_links, $links );
+    }
+    
+    /**
+     * Plugin uninstall method
      * 
      * @since 2.0
      */
     public static function uninstall() {
-        // Limpiar opciones si las hubiera en el futuro
+        // Clean up options if any in the future
         delete_option( 'ayudawp_lightbox_images_for_divi_options' );
         
-        // Limpiar caché si es necesario
+        // Clean up transients
+        delete_transient( 'ayudawp_lightbox_activation_error' );
+        
+        // Clean cache if necessary
         if ( function_exists( 'wp_cache_flush' ) ) {
             wp_cache_flush();
         }
     }
 }
 
-// Inicializar el plugin
-AyudaWP_Lightbox_Images_For_Divi::get_instance();
+// Initialize plugin only if this file is loaded in WordPress context
+if ( defined( 'ABSPATH' ) ) {
+    AyudaWP_Lightbox_Images_For_Divi::get_instance();
+}
 
-// Hook para desinstalación
+// Uninstall hook
 register_uninstall_hook( __FILE__, array( 'AyudaWP_Lightbox_Images_For_Divi', 'uninstall' ) );
