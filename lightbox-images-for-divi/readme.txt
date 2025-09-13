@@ -62,13 +62,13 @@ Yes, the plugin has been developed with compatibility with Divi 5 and its struct
 = How can I customize the image selectors? =
 For advanced users and developers, the plugin provides an `ayudawp_lightbox_selectors` filter. You can use this filter in your child theme's `functions.php` file to add or modify the CSS selectors that the plugin uses to identify images. For example:
 
-```php
+`php
 add_filter( 'ayudawp_lightbox_selectors', 'my_custom_lightbox_selectors' );
 function my_custom_lightbox_selectors( $selectors ) {
     $selectors[] = '.my-custom-module a'; // Add selector for custom module
     return $selectors;
 }
-```
+`
 
 = Does this plugin work with Divi Builder plugin on non-Divi themes? =
 Yes, as long as you have the Divi Builder plugin installed and active, the plugin will work regardless of your active theme.
