@@ -2,9 +2,9 @@
 Contributors: fernandot, ayudawp
 Tags: divi, lightbox, auto-linked, gallery, image
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,9 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Changelog ==
 
+= 2.1.1 =
+* Tested up to WordPress 6.9
+
 = 2.1 - 2025-09-11 =
 * Improved user experience during plugin activation with friendly admin notices instead of error pages
 * Enhanced dependency checking system with automatic plugin deactivation
@@ -103,8 +106,25 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Upgrade Notice ==
 
+= 2.1.1 =
+Plugin tested with WordPress 6.9 (and it works)
+
 = 2.1 =
 This update improves the activation experience with user-friendly admin notices and enhanced dependency checking. No breaking changes.
 
 = 2.0 =
 This is a major update with code refactoring. We recommend testing in a staging environment before updating in production. Make sure your version of Divi is 4.10 or higher.
+
+== Support ==
+
+= Need help or have suggestions? =
+* [Official website](https://servicios.ayudawp.com/)
+* [WordPress support forum](https://wordpress.org/support/plugin/lightbox-images-for-divi/)
+* [YouTube channel](https://www.youtube.com/AyudaWordPressES)
+* [Documentation and tutorials](https://ayudawp.com/)
+
+**Love the plugin?** Please leave us a 5-star review and help spread the word!
+
+== About AyudaWP ==
+
+We are specialists in WordPress security, SEO, and performance optimization plugins. We create tools that solve real problems for WordPress site owners while maintaining the highest coding standards and accessibility requirements.
