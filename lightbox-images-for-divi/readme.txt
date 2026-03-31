@@ -1,10 +1,10 @@
 === Lightbox Images for Divi Enhanced ===
 Contributors: fernandot, ayudawp
-Tags: divi, lightbox, auto-linked, gallery, image
+Tags: divi, lightbox, image, gallery, divi5
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.1
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,15 +23,17 @@ The plugin will automatically check for these requirements during activation and
 
 **Main features:**
 
+* **Full Divi 5 Support:** Works with Divi 5 pages, including backwards compatibility mode. No jQuery required — the plugin works in vanilla JavaScript with an elegant built-in lightbox when Magnific Popup is not available
+* **Attachment Page Links:** Now handles images linked to WordPress attachment pages (not just direct image URLs), resolving the full-size image automatically
 * **Dependency Checking:** Automatically verifies Divi theme or Divi Builder plugin is active before allowing activation
-* **Extended Compatibility:** Works with the Divi or Divi Builder theme, and has been designed with compatibility in mind for Divi 4.10 and future versions, including Divi 5
-* **Native Integration:** Uses the lightbox functionality already present in Divi, ensuring seamless integration with your site's design and performance
+* **Extended Compatibility:** Works with the Divi or Divi Builder theme, compatible with Divi 4.10+ and Divi 5
+* **Native Integration:** Uses Divi's Magnific Popup when available, falls back to a lightweight built-in lightbox otherwise
 * **Easy to Use:** Simply install and activate the plugin. No additional configuration is required
-* **Optimized Performance:** The code has been refactored to follow WordPress best practices, efficiently concatenating scripts and minimizing the impact on page load
-* **Ready for the Future:** Incorporates robust CSS/jQuery selectors and a script concatenation system that anticipates changes in the Divi 5 structure, such as the new Flexbox system
+* **Optimized Performance:** Vanilla JavaScript with no hard dependencies. CSS and JS loaded conditionally
+* **Ready for the Future:** Works in both Divi 4 (jQuery/Magnific Popup) and Divi 5 (vanilla JS fallback) environments
 * **Extensible:** Includes a filter (`ayudawp_lightbox_selectors`) that allows developers to customize CSS selectors to include or exclude specific elements
 
-This plugin enhances the user experience on websites built with Divi, ensuring that any image linked to itself (i.e., clicking on it opens the image in its full size) is displayed in Divi's elegant native lightbox effect.
+This plugin enhances the user experience on websites built with Divi, ensuring that any image linked to itself (i.e., clicking on it opens the image in its full size) is displayed in a lightbox effect.
 
 Unlike Divi's default functionality, which often restricts this effect to galleries, this plugin extends it to all individual images, providing a consistent and engaging visual experience.  
 
@@ -43,7 +45,7 @@ The plugin is ideal for photographers, bloggers, and any Divi user who wants to 
 2. Upload the `lightbox-images-for-divi-enhanced` folder to `/wp-content/plugins/` directory
 3. Activate the plugin via the 'Plugins' menu in WordPress
 4. The plugin will automatically check for Divi compatibility and prevent activation if requirements are not met
-5. That's it! All your auto-linked images will now open in a Divi lightbox
+5. That's it! All your auto-linked images will now open in a lightbox
 
 == Frequently Asked Questions ==
 
@@ -57,7 +59,10 @@ No, this plugin is specifically designed to work only with the Divi ecosystem (D
 The plugin will automatically deactivate itself and show an admin notice explaining why it was deactivated.
 
 = Is it compatible with Divi 5? =
-Yes, the plugin has been developed with compatibility with Divi 5 and its structural changes in mind. Robust selectors have been implemented and script loading has been optimized to ensure functionality in future versions of Divi.
+Yes, the plugin fully supports Divi 5. It works both in backwards compatibility mode (using Magnific Popup) and in native Divi 5 pages (using a lightweight built-in lightbox). No jQuery is required.
+
+= Does it work with images linked to attachment pages? =
+Yes, since version 2.2.0 the plugin handles both direct image URLs (e.g. photo.jpg) and WordPress attachment page links. The full-size image is resolved automatically from the embedded image element.
 
 = How can I customize the image selectors? =
 For advanced users and developers, the plugin provides an `ayudawp_lightbox_selectors` filter. You can use this filter in your child theme's `functions.php` file to add or modify the CSS selectors that the plugin uses to identify images. For example:
@@ -74,6 +79,19 @@ function my_custom_lightbox_selectors( $selectors ) {
 Yes, as long as you have the Divi Builder plugin installed and active, the plugin will work regardless of your active theme.
 
 == Changelog ==
+
+= 2.2.0 =
+* Full Divi 5 compatibility: rewritten JavaScript in vanilla JS without jQuery dependency
+* Added support for images linked to WordPress attachment pages (not just direct image URLs)
+* New built-in fallback lightbox for environments where Magnific Popup is not available
+* Improved image URL resolution: extracts full-size image from srcset or strips WordPress size suffix
+* Added debounced MutationObserver for better performance with dynamically loaded content
+* Added accessibility attributes (role, aria-modal, aria-label) to the fallback lightbox
+* New CSS file for fallback lightbox styles
+* jQuery is now an optional dependency (used if available, not required)
+* Keyboard support: Escape key closes the lightbox
+* Added new FAQ entries about Divi 5 and attachment page links
+* Tested up with WordPress 7.0
 
 = 2.1.1 =
 * Tested up to WordPress 6.9
@@ -105,6 +123,9 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 * Initial version
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+Major update: full Divi 5 compatibility, support for attachment page links, and a built-in fallback lightbox. No breaking changes. Recommended for all users, especially those using Divi 5.
 
 = 2.1.1 =
 Plugin tested with WordPress 6.9 (and it works)
