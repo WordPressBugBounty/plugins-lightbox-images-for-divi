@@ -4,7 +4,7 @@ Tags: divi, lightbox, image, gallery, divi5
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,8 +80,13 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Changelog ==
 
+= 2.2.2 =
+* Replaced exclusion-based (blacklist) approach with a whitelist strategy for maximum compatibility with third-party modules
+* The plugin now only acts inside Divi text modules, blurb content, and plain WordPress editor content, leaving all other modules untouched
+* Fixes interference with third-party modules like Divi Blog Extra, Divi Machine, and any future modules
+
 = 2.2.1 =
-* Fixed lightbox being applied to unintended elements like menu logos, blog thumbnails, and CTA images
+* Fixed lightbox being applied to unintended elements like menu logos, blog thumbnails, third-party module images, and CTA images
 * Removed overly broad `.et_pb_module a` CSS selector from defaults to prevent interference with non-content modules
 * Added exclusion list for Divi modules that handle their own click behavior (menus, blogs, portfolios, sliders, shop, headers, etc.)
 * Fixed direct image URL links not opening in lightbox because Magnific Popup was not being initialized directly by the plugin
@@ -97,7 +102,7 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 * jQuery is now an optional dependency (used if available, not required)
 * Keyboard support: Escape key closes the lightbox
 * Added new FAQ entries about Divi 5 and attachment page links
-* Tested up with WordPress 7.0
+* Tested up to WordPress 7.0
 
 = 2.1.1 =
 * Tested up to WordPress 6.9
@@ -130,8 +135,11 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Upgrade Notice ==
 
+= 2.2.2 =
+Replaces exclusion list with a whitelist approach for full compatibility with third-party Divi modules. Recommended update for all users.
+
 = 2.2.1 =
-Fixes lightbox being applied to menu logos, blog thumbnails, and other non-content elements. Recommended update for all 2.2.0 users.
+Fixes lightbox interfering with menu logos, blog thumbnails, and other non-content elements. Recommended update for all 2.2.0 users.
 
 = 2.2.0 =
 Major update: full Divi 5 compatibility, support for attachment page links, and a built-in fallback lightbox. No breaking changes. Recommended for all users, especially those using Divi 5.

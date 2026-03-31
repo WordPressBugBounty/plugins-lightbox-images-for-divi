@@ -122,25 +122,33 @@
     }
 
     /**
-     * Check if the link sits inside a Divi module that already handles
-     * its own click behavior (galleries, sliders, blogs, menus, etc.)
+     * Check if the link is inside an allowed content area.
+     * Whitelist approach: only act inside text/blurb content or plain
+     * WordPress editor content. Everything else is left untouched,
+     * including Divi native modules, third-party modules, menus, etc.
      */
-    function isInsideExcludedModule(link) {
-        return !!link.closest(
-            // Divi modules with their own lightbox or navigation
-            '.et_pb_gallery, .et_pb_gallery_image, ' +
-            '.et_pb_slider, .et_pb_fullwidth_slider, .et_pb_post_slider, .et_pb_slide, ' +
-            '.et_pb_blog, .et_pb_blog_grid, ' +
-            '.et_pb_portfolio, .et_pb_filterable_portfolio, .et_pb_fullwidth_portfolio, ' +
-            '.et_pb_menu, .et_pb_fullwidth_menu, ' +
-            '.et_pb_fullwidth_header, ' +
-            '.et_pb_shop, .et_pb_wc_images, ' +
-            '.et_pb_team_member, ' +
-            '.et_pb_cta, .et_pb_promo, ' +
-            '.et_pb_image, ' +
-            // HTML semantic containers that should not be intercepted
-            'nav, header, .site-header, .et-l--header'
-        );
+    function isInAllowedContext(link) {
+        // Inside a Divi text module or blurb content = always allowed
+        if (link.closest('.et_pb_text_inner, .et_pb_blurb_content')) {
+            return true;
+        }
+
+        // Inside any Divi module (native or third-party) = not allowed
+        if (link.closest('.et_pb_module')) {
+            return false;
+        }
+
+        // Inside navigation, header, footer or sidebar = not allowed
+        if (link.closest('nav, header, footer, aside, .site-header, .site-footer, .et-l--header, .et-l--footer')) {
+            return false;
+        }
+
+        // Inside general content area (WordPress editor) = allowed
+        if (link.closest('.entry-content, .et_pb_post_content')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -269,8 +277,8 @@
             return;
         }
 
-        if (isInsideExcludedModule(link)) {
-            debugLog('Skipping excluded module: ' + imageUrl);
+        if (!isInAllowedContext(link)) {
+            debugLog('Skipping link outside allowed context: ' + imageUrl);
             return;
         }
 
@@ -357,7 +365,7 @@
      * ------------------------------------------------------------- */
 
     function init() {
-        debugLog('Initializing AyudaWP Lightbox (v2.2.0)');
+        debugLog('Initializing AyudaWP Lightbox (v2.2.2)');
 
         processLinks();
 
