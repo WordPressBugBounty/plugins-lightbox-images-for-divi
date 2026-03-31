@@ -123,17 +123,21 @@
 
     /**
      * Check if the link is inside an allowed content area.
-     * Whitelist approach: only act inside text/blurb content or plain
+     * Whitelist approach: only act inside text/blurb/post content or plain
      * WordPress editor content. Everything else is left untouched,
      * including Divi native modules, third-party modules, menus, etc.
+     *
+     * Order matters: allowed containers are checked BEFORE the generic
+     * .et_pb_module block, because .et_pb_post_content is itself a module.
      */
     function isInAllowedContext(link) {
-        // Inside a Divi text module or blurb content = always allowed
-        if (link.closest('.et_pb_text_inner, .et_pb_blurb_content')) {
+        // Inside allowed Divi content containers = always allowed
+        // .et_pb_post_content must be here (not below) because it has .et_pb_module too
+        if (link.closest('.et_pb_text_inner, .et_pb_blurb_content, .et_pb_post_content')) {
             return true;
         }
 
-        // Inside any Divi module (native or third-party) = not allowed
+        // Inside any other Divi module (native or third-party) = not allowed
         if (link.closest('.et_pb_module')) {
             return false;
         }
@@ -143,8 +147,8 @@
             return false;
         }
 
-        // Inside general content area (WordPress editor) = allowed
-        if (link.closest('.entry-content, .et_pb_post_content')) {
+        // Inside general content area (WordPress editor without Divi modules) = allowed
+        if (link.closest('.entry-content')) {
             return true;
         }
 
@@ -365,7 +369,7 @@
      * ------------------------------------------------------------- */
 
     function init() {
-        debugLog('Initializing AyudaWP Lightbox (v2.2.2)');
+        debugLog('Initializing AyudaWP Lightbox (v2.2.3)');
 
         processLinks();
 

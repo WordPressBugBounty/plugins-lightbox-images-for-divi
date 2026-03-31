@@ -4,7 +4,7 @@ Tags: divi, lightbox, image, gallery, divi5
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,10 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Changelog ==
 
+= 2.2.3 =
+* Fixed lightbox not working on images in the WordPress classic/block editor post content field when rendered by Divi's Post Content module
+* The Post Content module container (`.et_pb_post_content`) is now correctly recognized as an allowed content area
+
 = 2.2.2 =
 * Replaced exclusion-based (blacklist) approach with a whitelist strategy for maximum compatibility with third-party modules
 * The plugin now only acts inside Divi text modules, blurb content, and plain WordPress editor content, leaving all other modules untouched
@@ -134,6 +138,9 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 * Initial version
 
 == Upgrade Notice ==
+
+= 2.2.3 =
+Fixes lightbox not working on images in the post content field (classic/block editor) on Divi 4 and 5. Recommended update.
 
 = 2.2.2 =
 Replaces exclusion list with a whitelist approach for full compatibility with third-party Divi modules. Recommended update for all users.

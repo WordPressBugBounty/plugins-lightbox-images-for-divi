@@ -3,7 +3,7 @@
 Plugin Name: Lightbox Images for Divi Enhanced
 Plugin URI: https://servicios.ayudawp.com
 Description: Apply Divi's native lightbox effect to all auto-linked images, not just galleries. Compatible with Divi 4.10+ and Divi 5. This plugin only works with the Divi theme or Divi Builder installed and active.
-Version: 2.2.2
+Version: 2.2.3
 Author: Fernando Tellado
 Author URI: https://ayudawp.com
 License: GPLv2
@@ -26,7 +26,7 @@ class AyudaWP_Lightbox_Images_For_Divi {
     /**
      * Plugin version
      */
-    const VERSION = '2.2.2';
+    const VERSION = '2.2.3';
 
     /**
      * Minimum required Divi version
