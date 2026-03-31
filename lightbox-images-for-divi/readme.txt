@@ -4,7 +4,7 @@ Tags: divi, lightbox, image, gallery, divi5
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Changelog ==
 
+= 2.2.1 =
+* Fixed lightbox being applied to unintended elements like menu logos, blog thumbnails, and CTA images
+* Removed overly broad `.et_pb_module a` CSS selector from defaults to prevent interference with non-content modules
+* Added exclusion list for Divi modules that handle their own click behavior (menus, blogs, portfolios, sliders, shop, headers, etc.)
+* Fixed direct image URL links not opening in lightbox because Magnific Popup was not being initialized directly by the plugin
+
 = 2.2.0 =
 * Full Divi 5 compatibility: rewritten JavaScript in vanilla JS without jQuery dependency
 * Added support for images linked to WordPress attachment pages (not just direct image URLs)
@@ -123,6 +129,9 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 * Initial version
 
 == Upgrade Notice ==
+
+= 2.2.1 =
+Fixes lightbox being applied to menu logos, blog thumbnails, and other non-content elements. Recommended update for all 2.2.0 users.
 
 = 2.2.0 =
 Major update: full Divi 5 compatibility, support for attachment page links, and a built-in fallback lightbox. No breaking changes. Recommended for all users, especially those using Divi 5.

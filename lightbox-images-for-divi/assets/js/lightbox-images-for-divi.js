@@ -122,12 +122,24 @@
     }
 
     /**
-     * Check if the link sits inside a Divi gallery or slider
+     * Check if the link sits inside a Divi module that already handles
+     * its own click behavior (galleries, sliders, blogs, menus, etc.)
      */
-    function isPartOfDiviGallery(link) {
+    function isInsideExcludedModule(link) {
         return !!link.closest(
-            '.et_pb_gallery, .et_pb_gallery_image, .et_pb_slider, ' +
-            '.et_pb_blog_grid, .et_pb_portfolio'
+            // Divi modules with their own lightbox or navigation
+            '.et_pb_gallery, .et_pb_gallery_image, ' +
+            '.et_pb_slider, .et_pb_fullwidth_slider, .et_pb_post_slider, .et_pb_slide, ' +
+            '.et_pb_blog, .et_pb_blog_grid, ' +
+            '.et_pb_portfolio, .et_pb_filterable_portfolio, .et_pb_fullwidth_portfolio, ' +
+            '.et_pb_menu, .et_pb_fullwidth_menu, ' +
+            '.et_pb_fullwidth_header, ' +
+            '.et_pb_shop, .et_pb_wc_images, ' +
+            '.et_pb_team_member, ' +
+            '.et_pb_cta, .et_pb_promo, ' +
+            '.et_pb_image, ' +
+            // HTML semantic containers that should not be intercepted
+            'nav, header, .site-header, .et-l--header'
         );
     }
 
@@ -257,8 +269,8 @@
             return;
         }
 
-        if (isPartOfDiviGallery(link)) {
-            debugLog('Skipping gallery image: ' + imageUrl);
+        if (isInsideExcludedModule(link)) {
+            debugLog('Skipping excluded module: ' + imageUrl);
             return;
         }
 
