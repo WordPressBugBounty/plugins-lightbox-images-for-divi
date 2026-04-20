@@ -369,7 +369,7 @@
      * ------------------------------------------------------------- */
 
     function init() {
-        debugLog('Initializing AyudaWP Lightbox (v2.2.3)');
+        debugLog('Initializing AyudaWP Lightbox (v2.2.4)');
 
         processLinks();
 

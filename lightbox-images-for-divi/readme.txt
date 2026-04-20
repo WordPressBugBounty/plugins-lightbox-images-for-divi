@@ -4,7 +4,7 @@ Tags: divi, lightbox, image, gallery, divi5
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Changelog ==
 
+= 2.2.4 =
+* Fixed 404 error in browser console on Divi 5 for `magnific-popup.js` and `magnific_popup.css`
+* The plugin now verifies the bundled Magnific Popup files actually exist on disk before enqueuing them, and cleanly falls back to the built-in vanilla JS lightbox when they are not available
+* Enqueue hook moved to priority 20 so Magnific Popup detection correctly sees scripts already registered by Divi
+* Hardened script detection loop against non-string values (prevents potential PHP 8+ warnings)
+
 = 2.2.3 =
 * Fixed lightbox not working on images in the WordPress classic/block editor post content field when rendered by Divi's Post Content module
 * The Post Content module container (`.et_pb_post_content`) is now correctly recognized as an allowed content area
@@ -138,6 +144,9 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 * Initial version
 
 == Upgrade Notice ==
+
+= 2.2.4 =
+Fixes a cosmetic 404 error in the browser console on Divi 5. The lightbox itself was already working via the built-in fallback; this release removes the noise. Recommended for all Divi 5 users.
 
 = 2.2.3 =
 Fixes lightbox not working on images in the post content field (classic/block editor) on Divi 4 and 5. Recommended update.

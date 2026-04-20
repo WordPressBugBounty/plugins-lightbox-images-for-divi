@@ -3,7 +3,7 @@
 Plugin Name: Lightbox Images for Divi Enhanced
 Plugin URI: https://servicios.ayudawp.com
 Description: Apply Divi's native lightbox effect to all auto-linked images, not just galleries. Compatible with Divi 4.10+ and Divi 5. This plugin only works with the Divi theme or Divi Builder installed and active.
-Version: 2.2.3
+Version: 2.2.4
 Author: Fernando Tellado
 Author URI: https://ayudawp.com
 License: GPLv2
@@ -26,7 +26,7 @@ class AyudaWP_Lightbox_Images_For_Divi {
     /**
      * Plugin version
      */
-    const VERSION = '2.2.3';
+    const VERSION = '2.2.4';
 
     /**
      * Minimum required Divi version
@@ -73,7 +73,9 @@ class AyudaWP_Lightbox_Images_For_Divi {
         add_action( 'admin_notices', array( $this, 'show_activation_notices' ) );
 
         // Enqueue scripts and styles only if dependencies are met
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+        // Priority 20 ensures we run after Divi has registered its own scripts,
+        // so our Magnific Popup detection sees what Divi has already enqueued.
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 20 );
 
         // Add filter to customize selectors (for developers)
         add_filter( 'ayudawp_lightbox_selectors', array( $this, 'default_selectors' ) );
@@ -282,33 +284,58 @@ class AyudaWP_Lightbox_Images_For_Divi {
 
     /**
      * Try to enqueue Magnific Popup from Divi assets.
+     *
      * Not critical: the JS fallback handles the lightbox when this is absent.
+     *
+     * Divi 5 no longer ships Magnific Popup at the legacy path from Divi 4,
+     * so we verify the file actually exists on disk before enqueuing it.
+     * Without this check, WordPress would output an enqueue URL that 404s
+     * in the browser console on Divi 5 installations.
      *
      * @since 2.0
      */
     private function maybe_enqueue_magnific_popup() {
         global $wp_scripts;
 
-        // Check if Magnific Popup is already enqueued by Divi
-        if ( isset( $wp_scripts->registered ) ) {
+        // Check if Magnific Popup is already enqueued by Divi or another plugin.
+        if ( isset( $wp_scripts->registered ) && is_array( $wp_scripts->registered ) ) {
             foreach ( $wp_scripts->registered as $handle => $script ) {
-                if ( false !== strpos( $script->src, 'magnific' ) || false !== strpos( $handle, 'magnific' ) ) {
-                    return; // Already enqueued
+                // Handle may be non-string in edge cases; src may be empty/false for virtual scripts.
+                if ( ! is_string( $handle ) ) {
+                    continue;
+                }
+                $src = isset( $script->src ) && is_string( $script->src ) ? $script->src : '';
+
+                if ( false !== strpos( $handle, 'magnific' ) || ( '' !== $src && false !== strpos( $src, 'magnific' ) ) ) {
+                    return; // Already enqueued.
                 }
             }
         }
 
-        // Try to enqueue from Divi's bundled assets
-        if ( ! defined( 'ET_BUILDER_URI' ) ) {
+        // We need Divi's builder constants to locate the bundled assets.
+        if ( ! defined( 'ET_BUILDER_URI' ) || ! defined( 'ET_BUILDER_DIR' ) ) {
             return;
         }
 
-        $css_path = ET_BUILDER_URI . '/feature/dynamic-assets/assets/css/magnific_popup.css';
-        $js_path  = ET_BUILDER_URI . '/feature/dynamic-assets/assets/js/magnific-popup.js';
+        // Relative paths inside Divi's builder folder.
+        $css_rel = '/feature/dynamic-assets/assets/css/magnific_popup.css';
+        $js_rel  = '/feature/dynamic-assets/assets/js/magnific-popup.js';
+
+        // Physical paths on disk to verify the files exist before enqueuing.
+        // This prevents 404s on Divi 5, where these files no longer live here.
+        $css_file = ET_BUILDER_DIR . $css_rel;
+        $js_file  = ET_BUILDER_DIR . $js_rel;
+
+        if ( ! file_exists( $css_file ) || ! file_exists( $js_file ) ) {
+            return; // Not available on this Divi install. Fallback lightbox will handle it.
+        }
+
+        $css_url = ET_BUILDER_URI . $css_rel;
+        $js_url  = ET_BUILDER_URI . $js_rel;
 
         wp_enqueue_style(
             'ayudawp-magnific-popup',
-            $css_path,
+            $css_url,
             array(),
             $this->get_divi_version()
         );
@@ -320,7 +347,7 @@ class AyudaWP_Lightbox_Images_For_Divi {
 
         wp_enqueue_script(
             'ayudawp-magnific-popup',
-            $js_path,
+            $js_url,
             $mp_deps,
             $this->get_divi_version(),
             true
