@@ -1,0 +1,164 @@
+Lightbox Images for Divi Enhanced — Full changelog
+
+For each release, see the entries below. The latest version is always at the top.
+The current release notes also live in readme.txt under "== Changelog ==".
+
+= 2.2.5 =
+* Fixed: Linked images (e.g. button-style images linking to other pages) were being hijacked by the lightbox since 2.2.0, overriding the original `href`
+* Improved: Attachment-page detection now requires the link to be same-origin, not open in a new window, and either carry an `attachment_id` query parameter or have a path slug that matches the image file name
+* Plain external or internal links wrapping an `<img>` are now left untouched, restoring the original click behavior
+* Changed: Version history moved to a dedicated changelog.txt file served from the plugin's public SVN, keeping readme.txt focused on the current release
+
+= 2.2.4 =
+* Fixed 404 error in browser console on Divi 5 for `magnific-popup.js` and `magnific_popup.css`
+* The plugin now verifies the bundled Magnific Popup files actually exist on disk before enqueuing them, and cleanly falls back to the built-in vanilla JS lightbox when they are not available
+* Enqueue hook moved to priority 20 so Magnific Popup detection correctly sees scripts already registered by Divi
+* Hardened script detection loop against non-string values (prevents potential PHP 8+ warnings)
+
+= 2.2.3 =
+* Fixed lightbox not working on images in the WordPress classic/block editor post content field when rendered by Divi's Post Content module
+* The Post Content module container (`.et_pb_post_content`) is now correctly recognized as an allowed content area
+
+= 2.2.2 =
+* Replaced exclusion-based (blacklist) approach with a whitelist strategy for maximum compatibility with third-party modules
+* The plugin now only acts inside Divi text modules, blurb content, and plain WordPress editor content, leaving all other modules untouched
+* Fixes interference with third-party modules like Divi Blog Extra, Divi Machine, and any future modules
+
+= 2.2.1 =
+* Fixed lightbox being applied to unintended elements like menu logos, blog thumbnails, third-party module images, and CTA images
+* Removed overly broad `.et_pb_module a` CSS selector from defaults to prevent interference with non-content modules
+* Added exclusion list for Divi modules that handle their own click behavior (menus, blogs, portfolios, sliders, shop, headers, etc.)
+* Fixed direct image URL links not opening in lightbox because Magnific Popup was not being initialized directly by the plugin
+
+= 2.2.0 =
+* Full Divi 5 compatibility: rewritten JavaScript in vanilla JS without jQuery dependency
+* Added support for images linked to WordPress attachment pages (not just direct image URLs)
+* New built-in fallback lightbox for environments where Magnific Popup is not available
+* Improved image URL resolution: extracts full-size image from srcset or strips WordPress size suffix
+* Added debounced MutationObserver for better performance with dynamically loaded content
+* Added accessibility attributes (role, aria-modal, aria-label) to the fallback lightbox
+* New CSS file for fallback lightbox styles
+* jQuery is now an optional dependency (used if available, not required)
+* Keyboard support: Escape key closes the lightbox
+* Added new FAQ entries about Divi 5 and attachment page links
+* Tested up to WordPress 7.0
+
+= 2.1.1 =
+* Tested up to WordPress 6.9
+
+= 2.1 - 2025-09-11 =
+* Improved user experience during plugin activation with friendly admin notices instead of error pages
+* Enhanced dependency checking system with automatic plugin deactivation
+* Added comprehensive compatibility verification during plugin activation
+* Improved error messages with clear requirements explanation
+* Added automatic deactivation if Divi is removed after plugin activation
+* Better detection of Divi Builder plugin vs Divi theme
+* Added support link in plugin action links
+* Improved version detection for better compatibility checking
+* Enhanced admin notices for better user experience
+* Removed deprecated load_plugin_textdomain() function call
+
+= 2.0 - 2025-08-04 =
+* Complete refactoring of the code to a class structure (Singleton)
+* Migration of the JavaScript script to an external file (`assets/js/lightbox-images-for-divi.js`)
+* Use of `wp_enqueue_script` for more efficient script loading and following WordPress best practices
+* Optimization of CSS/jQuery selectors for greater robustness and compatibility with future versions of Divi (including Divi 5)
+* Implementation of a filter (`ayudawp_lightbox_selectors`) to allow customization of selectors
+* Improved verification of compatibility with Divi and its version
+* Added uninstall hook for cleaning options
+* Updated plugin information (version, author, etc.)
+* Improved internal documentation and the `readme.txt` file
+
+= 1.0.7 =
+* Tested with Divi 4.27.4
+* Tested with WordPress 6.7.1
+
+= 1.0.6 =
+* Tested with Divi 4.27.1
+* Tested with WordPress 6.6.2
+
+= 1.0.5 =
+* Tested with Divi 4.23
+* Tested with WordPress 6.4
+
+= 1.0.4 =
+* Tested with Divi 4.20.2
+* Tested with WordPress 6.2
+
+= 1.0.3 =
+* Tested with Divi 4.18.0
+* Tested with WordPress 6.1
+
+= 1.0.2 =
+* Tested with Divi 4.18.0
+* Tested with WordPress 6.0.2
+
+= 1.0.1 =
+* Tested with Divi 4.17.4
+* Tested with WordPress 6.0
+
+= 1.0 =
+* Plugin refactored in order to work with Divi latest versions
+* Tested with Divi 4.14.8
+* Tested with WordPress 5.9.1
+
+= 0.9.17 =
+* Tested with Divi 4.14.7
+* Tested with WordPress 5.9
+
+= 0.9.16 =
+* Tested with Divi 4.9.9
+* Tested with WordPress 5.8
+
+= 0.9.15 =
+* Tested with Divi 4.7.4
+* Tested with WordPress 5.6
+
+= 0.9.14 =
+* Tested with Divi 4.6.1
+* Tested with WordPress 5.5.1
+
+= 0.9.13 =
+* Tested with Divi 4.6
+* Changed readme link according the plugin directory guidelines
+
+= 0.9.12 =
+* Tested up to WordPress 5.5
+
+= 0.9.11 =
+* Tested up to WordPress 5.4.1
+* Widgets support removed due to several issues
+
+= 0.9.10 =
+* Tested up to WordPress 5.4
+* Now it works with widgets too (Thanks to @akg-free)
+
+= 0.9.9 =
+* Tested up to WordPress 5.3.2
+
+= 0.9.8 =
+* Solved issue with Divi galleries
+
+= 0.9.7 =
+* Tested up and working with WordPress 5.3
+
+= 0.9.6 =
+* Tested up to WordPress 5.2.2
+
+= 0.9.5 =
+* Tested up to WordPress 5.2
+
+= 0.9.4 =
+* Tested up to WordPress 5.1
+
+= 0.9.3 =
+* Tested up to WordPress 5.0 tag added
+
+= 0.9.2 =
+* Tested up to WordPress 4.9.6 and Divi latest updates
+
+= 0.9.1 =
+* Tested up to WordPress 4.9.5 and Divi latest updates
+
+= 0.9 =
+* Initial release

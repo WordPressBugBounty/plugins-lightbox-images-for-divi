@@ -56,9 +56,10 @@
      * Resolve the full-size image URL for a given link.
      *
      * - If the href already ends in an image extension, return it.
-     * - If the link wraps an <img>, derive the full-size URL from its
-     *   src by stripping the WordPress "-WIDTHxHEIGHT" suffix.
-     *   (e.g. photo-1024x768.jpg -> photo.jpg)
+     * - Otherwise, only resolve from the child <img> when the link
+     *   strongly looks like a WordPress attachment page. This protects
+     *   regular linked images (buttons, CTAs, teaser images that link to
+     *   another page) from being hijacked by the lightbox.
      */
     function resolveImageUrl(link) {
         var href = link.getAttribute('href') || '';
@@ -67,7 +68,10 @@
             return href;
         }
 
-        // Try to resolve from the child <img> element
+        if (!isLikelyAttachmentPageLink(link)) {
+            return null;
+        }
+
         var img = link.querySelector('img');
         if (!img) {
             return null;
@@ -89,6 +93,90 @@
         }
 
         return null;
+    }
+
+    /**
+     * Heuristic: does this link look like a WordPress attachment page?
+     *
+     * Required: the link wraps an <img>, the href is same-origin, and the
+     * link does not open in a new window. Then accept only when either:
+     *   - the URL has an `attachment_id` query parameter, OR
+     *   - the last path segment equals (or starts with) the image file
+     *     name with the WordPress "-WIDTHxHEIGHT" suffix and the extension
+     *     stripped.
+     *
+     * Anything else (external links, generic same-origin links to unrelated
+     * pages, links opening in a new window) is treated as a plain link and
+     * left untouched.
+     */
+    function isLikelyAttachmentPageLink(link) {
+        var img = link.querySelector('img');
+        if (!img) {
+            return false;
+        }
+
+        var href = link.getAttribute('href') || '';
+        if (!href) {
+            return false;
+        }
+
+        // Attachment page links don't typically open in a new window
+        var target = (link.getAttribute('target') || '').toLowerCase();
+        if (target === '_blank') {
+            return false;
+        }
+
+        // Resolve against current location to handle relative URLs
+        var hrefUrl;
+        try {
+            hrefUrl = new URL(href, window.location.href);
+        } catch (e) {
+            return false;
+        }
+
+        // Must be same origin
+        if (hrefUrl.origin !== window.location.origin) {
+            return false;
+        }
+
+        // Explicit ?attachment_id=... is a definitive match
+        if (hrefUrl.searchParams && hrefUrl.searchParams.get('attachment_id')) {
+            return true;
+        }
+
+        // Otherwise compare the URL slug against the image file name
+        var path = hrefUrl.pathname.replace(/\/+$/, '');
+        if (!path) {
+            return false;
+        }
+        var slug = path.split('/').pop();
+        if (!slug) {
+            return false;
+        }
+
+        var src = img.getAttribute('src') || '';
+        if (!src) {
+            return false;
+        }
+
+        var fileName = src.split('/').pop().split('?')[0].split('#')[0];
+        fileName = fileName.replace(/-\d+x\d+(\.\w+)$/, '$1').replace(/\.\w+$/, '');
+        if (fileName.length < 3) {
+            return false;
+        }
+
+        var decodedSlug, decodedFileName;
+        try {
+            decodedSlug     = decodeURIComponent(slug);
+            decodedFileName = decodeURIComponent(fileName);
+        } catch (e) {
+            decodedSlug     = slug;
+            decodedFileName = fileName;
+        }
+
+        return decodedSlug === decodedFileName ||
+               decodedSlug.indexOf(decodedFileName + '-') === 0 ||
+               decodedSlug.indexOf(decodedFileName + '_') === 0;
     }
 
     /**
@@ -369,7 +457,7 @@
      * ------------------------------------------------------------- */
 
     function init() {
-        debugLog('Initializing AyudaWP Lightbox (v2.2.4)');
+        debugLog('Initializing AyudaWP Lightbox (v2.2.5)');
 
         processLinks();
 

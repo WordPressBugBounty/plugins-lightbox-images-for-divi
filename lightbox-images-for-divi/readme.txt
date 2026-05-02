@@ -4,7 +4,7 @@ Tags: divi, lightbox, image, gallery, divi5
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.4
+Stable tag: 2.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 
 == Changelog ==
 
+= 2.2.5 =
+* Fixed: Linked images (e.g. button-style images linking to other pages) were being hijacked by the lightbox since 2.2.0, overriding the original `href`
+* Improved: Attachment-page detection now requires the link to be same-origin, not open in a new window, and either carry an `attachment_id` query parameter or have a path slug that matches the image file name
+* Plain external or internal links wrapping an `<img>` are now left untouched, restoring the original click behavior
+* Changed: Version history moved to a dedicated changelog.txt file served from the plugin's public SVN, keeping readme.txt focused on the current release
+
 = 2.2.4 =
 * Fixed 404 error in browser console on Divi 5 for `magnific-popup.js` and `magnific_popup.css`
 * The plugin now verifies the bundled Magnific Popup files actually exist on disk before enqueuing them, and cleanly falls back to the built-in vanilla JS lightbox when they are not available
@@ -90,84 +96,12 @@ Yes, as long as you have the Divi Builder plugin installed and active, the plugi
 * Fixed lightbox not working on images in the WordPress classic/block editor post content field when rendered by Divi's Post Content module
 * The Post Content module container (`.et_pb_post_content`) is now correctly recognized as an allowed content area
 
-= 2.2.2 =
-* Replaced exclusion-based (blacklist) approach with a whitelist strategy for maximum compatibility with third-party modules
-* The plugin now only acts inside Divi text modules, blurb content, and plain WordPress editor content, leaving all other modules untouched
-* Fixes interference with third-party modules like Divi Blog Extra, Divi Machine, and any future modules
-
-= 2.2.1 =
-* Fixed lightbox being applied to unintended elements like menu logos, blog thumbnails, third-party module images, and CTA images
-* Removed overly broad `.et_pb_module a` CSS selector from defaults to prevent interference with non-content modules
-* Added exclusion list for Divi modules that handle their own click behavior (menus, blogs, portfolios, sliders, shop, headers, etc.)
-* Fixed direct image URL links not opening in lightbox because Magnific Popup was not being initialized directly by the plugin
-
-= 2.2.0 =
-* Full Divi 5 compatibility: rewritten JavaScript in vanilla JS without jQuery dependency
-* Added support for images linked to WordPress attachment pages (not just direct image URLs)
-* New built-in fallback lightbox for environments where Magnific Popup is not available
-* Improved image URL resolution: extracts full-size image from srcset or strips WordPress size suffix
-* Added debounced MutationObserver for better performance with dynamically loaded content
-* Added accessibility attributes (role, aria-modal, aria-label) to the fallback lightbox
-* New CSS file for fallback lightbox styles
-* jQuery is now an optional dependency (used if available, not required)
-* Keyboard support: Escape key closes the lightbox
-* Added new FAQ entries about Divi 5 and attachment page links
-* Tested up to WordPress 7.0
-
-= 2.1.1 =
-* Tested up to WordPress 6.9
-
-= 2.1 - 2025-09-11 =
-* Improved user experience during plugin activation with friendly admin notices instead of error pages
-* Enhanced dependency checking system with automatic plugin deactivation
-* Added comprehensive compatibility verification during plugin activation
-* Improved error messages with clear requirements explanation
-* Added automatic deactivation if Divi is removed after plugin activation
-* Better detection of Divi Builder plugin vs Divi theme
-* Added support link in plugin action links
-* Improved version detection for better compatibility checking
-* Enhanced admin notices for better user experience
-* Removed deprecated load_plugin_textdomain() function call
-
-= 2.0 - 2025-08-04 =
-* Complete refactoring of the code to a class structure (Singleton)
-* Migration of the JavaScript script to an external file (`assets/js/lightbox-images-for-divi.js`)
-* Use of `wp_enqueue_script` for more efficient script loading and following WordPress best practices
-* Optimization of CSS/jQuery selectors for greater robustness and compatibility with future versions of Divi (including Divi 5)
-* Implementation of a filter (`ayudawp_lightbox_selectors`) to allow customization of selectors
-* Improved verification of compatibility with Divi and its version
-* Added uninstall hook for cleaning options
-* Updated plugin information (version, author, etc.)
-* Improved internal documentation and the `readme.txt` file
-
-= 1.0.7 - 2024-07-18 =
-* Initial version
+For older changelog entries, please check the [changelog.txt](https://plugins.svn.wordpress.org/lightbox-images-for-divi/trunk/changelog.txt) file
 
 == Upgrade Notice ==
 
-= 2.2.4 =
-Fixes a cosmetic 404 error in the browser console on Divi 5. The lightbox itself was already working via the built-in fallback; this release removes the noise. Recommended for all Divi 5 users.
-
-= 2.2.3 =
-Fixes lightbox not working on images in the post content field (classic/block editor) on Divi 4 and 5. Recommended update.
-
-= 2.2.2 =
-Replaces exclusion list with a whitelist approach for full compatibility with third-party Divi modules. Recommended update for all users.
-
-= 2.2.1 =
-Fixes lightbox interfering with menu logos, blog thumbnails, and other non-content elements. Recommended update for all 2.2.0 users.
-
-= 2.2.0 =
-Major update: full Divi 5 compatibility, support for attachment page links, and a built-in fallback lightbox. No breaking changes. Recommended for all users, especially those using Divi 5.
-
-= 2.1.1 =
-Plugin tested with WordPress 6.9 (and it works)
-
-= 2.1 =
-This update improves the activation experience with user-friendly admin notices and enhanced dependency checking. No breaking changes.
-
-= 2.0 =
-This is a major update with code refactoring. We recommend testing in a staging environment before updating in production. Make sure your version of Divi is 4.10 or higher.
+= 2.2.5 =
+Fixes a regression introduced in 2.2.0 where images wrapped in regular links (buttons, CTAs) were being captured by the lightbox, overriding the original link. Recommended for all users.
 
 == Support ==
 
